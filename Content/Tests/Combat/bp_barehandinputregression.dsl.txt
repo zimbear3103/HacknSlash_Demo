@@ -1,0 +1,83 @@
+; Tests real GAS inputs and montage sections; only the mode is preconfigured.
+(event EventBeginPlay
+ (Utilities|FlowControl|Delay 0.5)
+ (Ability|GameplayEffect|AddLooseGameplayTags (Game|GetPlayerCharacter 0) (GameplayTags|MakeLiteralGameplayTagContainer "(GameplayTags=((TagName=\"State.CombatMode.BareHand\")))"))
+ (Ability|Async|WaitGameplayEventtoActor :TargetActor (Game|GetPlayerCharacter 0) :EventTag "(TagName=\"Event.Combat.HeavyInput\")" :OnlyTriggerOnce false :OnlyMatchExact true
+  (:then
+   (Ability|Async|WaitGameplayEventtoActor :TargetActor (Game|GetPlayerCharacter 0) :EventTag "(TagName=\"Event.Combat.CombatWindow.Open\")" :OnlyTriggerOnce false :OnlyMatchExact true
+    (:then
+     (Ability|Async|WaitGameplayEventtoActor :TargetActor (Game|GetPlayerCharacter 0) :EventTag "(TagName=\"Event.Combat.CombatWindow.Close\")" :OnlyTriggerOnce false :OnlyMatchExact true
+      (:then
+       (Development|PrintString :InString "[BARE INPUT TEST] START idle RMB" :bPrintToScreen false :bPrintToLog true)
+       (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)
+       (Utilities|FlowControl|Delay 0.1)
+       (Utilities|FlowControl|Sequence
+        (:then_0
+         (if (== (Variables|Default|GetMEventCount) 0)
+          (Development|PrintString :InString "[BARE INPUT TEST] PASS idle RMB ignored" :bPrintToScreen false :bPrintToLog true)
+          (else (Development|PrintString :InString "[BARE INPUT TEST] FAIL idle RMB sent event" :bPrintToScreen false :bPrintToLog true))))
+        (:then_1 (CallFunction|RunCases))))
+      (:EventReceived (Variables|Default|SetMWindow false))))
+    (:EventReceived (Variables|Default|SetMWindow true))))
+  (:EventReceived (Variables|Default|SetMEventCount (+ (Variables|Default|GetMEventCount) 1)))))
+(event Custom|RunCases
+ (Variables|Default|SetMEventCount 0)
+ (Variables|Default|SetMObserved "")
+ (Variables|Default|SetMSection "None")
+ (Variables|Default|SetMWindow false)
+ (Variables|Default|SetMWindowUsed false)
+ (Variables|Default|SetMRunning true)
+ (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+ (Utilities|FlowControl|Delay 4.0)
+ (Variables|Default|SetMRunning false)
+ (Utilities|FlowControl|Sequence
+  (:then_0
+   (if (== (Variables|Default|GetMCaseIndex) 0)
+    (Utilities|FlowControl|Sequence
+     (:then_0
+      (if (== (Variables|Default|GetMEventCount) 2)
+       (Development|PrintString :InString "[BARE INPUT TEST] PASS RMB forwarded during attack" :bPrintToScreen false :bPrintToLog true)
+       (else (Development|PrintString :InString "[BARE INPUT TEST] FAIL RMB forwarding count" :bPrintToScreen false :bPrintToLog true))))
+     (:then_1
+      (if (Utilities|String|EqualExactly(String) (Variables|Default|GetMObserved) "Attack_01>Attack_02")
+       (Development|PrintString :InString "[BARE INPUT TEST] PASS index1 rejected and index2 consumes window" :bPrintToScreen false :bPrintToLog true)
+       (else (Development|PrintString :InString "[BARE INPUT TEST] FAIL RMB did not consume second window" :bPrintToScreen false :bPrintToLog true)))))
+    (else
+     (if (Utilities|String|EqualExactly(String) (Variables|Default|GetMObserved) "Attack_01>Attack_02>Attack_03")
+      (Development|PrintString :InString "[BARE INPUT TEST] PASS light three-hit chain" :bPrintToScreen false :bPrintToLog true)
+      (else (Development|PrintString :InString "[BARE INPUT TEST] FAIL light three-hit chain" :bPrintToScreen false :bPrintToLog true))))))
+  (:then_1
+   (Development|PrintString :InString (Utilities|String|Append "[BARE INPUT TEST] OBSERVED " (Variables|Default|GetMObserved)) :bPrintToScreen false :bPrintToLog true)
+   (if (== (Variables|Default|GetMCaseIndex) 0)
+    (Variables|Default|SetMCaseIndex 1)
+    (CallFunction|RunCases)
+    (else
+     (Ability|GameplayEffect|RemoveLooseGameplayTags (Game|GetPlayerCharacter 0) (GameplayTags|MakeLiteralGameplayTagContainer "(GameplayTags=((TagName=\"State.CombatMode.BareHand\")))"))
+     (Development|PrintString :InString "[BARE INPUT TEST] DONE" :bPrintToScreen false :bPrintToLog true))))))
+(event EventTick (DeltaSeconds)
+ (if (Variables|Default|GetMRunning)
+  (bind section (Animation|Montage|MontageGetCurrentSection :self (Components|SkeletalMesh|GetAnimInstance :self (Class|Character|GetMesh :self (Game|GetPlayerCharacter 0)))))
+  (bind sectionText (Utilities|String|ToString(Name) section))
+  (Utilities|FlowControl|Sequence
+   (:then_0
+    (if (and (not (Utilities|String|EqualExactly(String) sectionText "None")) (Utilities|String|NotEqualExactly(String) sectionText (Utilities|String|ToString(Name) (Variables|Default|GetMSection))))
+     (Variables|Default|SetMSection section)
+     (Variables|Default|SetMWindowUsed false)
+     (Variables|Default|SetMObserved (Utilities|String|Append (Utilities|String|Append (Variables|Default|GetMObserved) (Utilities|String|SelectString :A "" :B ">" :bPickA (Utilities|String|EqualExactly(String) (Variables|Default|GetMObserved) ""))) sectionText))))
+   (:then_1
+    (if (and (Variables|Default|GetMWindow) (not (Variables|Default|GetMWindowUsed)))
+     (Variables|Default|SetMWindowUsed true)
+     (if (Utilities|String|EqualExactly(String) sectionText "Attack_01")
+      (Utilities|FlowControl|Sequence
+       (:then_0 (if (== (Variables|Default|GetMCaseIndex) 0) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)))
+       (:then_1 (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)))
+      (elif (Utilities|String|EqualExactly(String) sectionText "Attack_02")
+       (Utilities|FlowControl|Sequence
+        (:then_0 (if (== (Variables|Default|GetMCaseIndex) 0) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)))
+        (:then_1 (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3))))))))))

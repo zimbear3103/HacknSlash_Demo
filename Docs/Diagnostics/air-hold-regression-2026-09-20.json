@@ -1,0 +1,101 @@
+{
+  "date": "2026-09-20",
+  "baseline": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"returnValue\":[\"[2026.09.19-17.55.24:946][362]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] targetHP=150.0\",\"[2026.09.19-17.55.24:947][362]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] targetFalling=true\",\"[2026.09.19-17.55.25:055][372]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] gravity H=0.0\",\"[2026.09.19-17.55.25:055][372]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] gravity T=0.0\",\"[2026.09.19-17.55.25:055][372]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] distance=180.144989\",\"[2026.09.19-17.55.25:055][372]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS holds both\",\"[2026.09.19-17.55.25:055][372]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] FAIL marks used\",\"[2026.09.19-17.55.26:362][489]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] FAIL early input ignored and both gravity restored\",\"[2026.09.19-17.55.26:472][499]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] FAIL reactivation blocked before landing\",\"[2026.09.19-17.55.26:472][499]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] DONE\"]}"
+      }
+    ]
+  },
+  "final": [
+    "[2026.09.19-18.02.39:054][332]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] targetHP=150.0",
+    "[2026.09.19-18.02.39:054][332]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] targetFalling=true",
+    "[2026.09.19-18.02.39:158][342]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] gravity H=0.0",
+    "[2026.09.19-18.02.39:158][342]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] gravity T=0.0",
+    "[2026.09.19-18.02.39:158][342]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] distance=180.154465",
+    "[2026.09.19-18.02.39:158][342]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS holds both",
+    "[2026.09.19-18.02.39:158][342]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS marks used",
+    "[2026.09.19-18.02.40:467][459]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS early input ignored and both gravity restored",
+    "[2026.09.19-18.02.40:572][468]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS reactivation blocked before landing",
+    "[2026.09.19-18.02.43:581][728]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS landing resets used tag",
+    "[2026.09.19-18.02.45:047][857]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS window input reaches Air_02",
+    "[2026.09.19-18.02.46:051][945]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS full combo restores both",
+    "[2026.09.19-18.02.49:372][229]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS air attack without target",
+    "[2026.09.19-18.02.49:571][246]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS interrupted montage restores gravity",
+    "[2026.09.19-18.02.55:987][795]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] PASS timeout restores gravity",
+    "[2026.09.19-18.02.55:987][795]LogBlueprintUserMessages: [BP_AirHoldRegression_C_0] [AIR TEST] DONE"
+  ],
+  "nodeDiff": {
+    "air": {
+      "newNodes": [
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/AirCombo/GA_AirAttack.GA_AirAttack:EventGraph.K2Node_CallFunction_88",
+          "type": "Ability|GameplayEffect|AddLooseGameplayTags"
+        },
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/AirCombo/GA_AirAttack.GA_AirAttack:EventGraph.K2Node_CallFunction_90",
+          "type": "GameplayTags|MakeLiteralGameplayTagContainer"
+        },
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/AirCombo/GA_AirAttack.GA_AirAttack:EventGraph.K2Node_LatentAbilityCall_25",
+          "type": "Ability|Tasks|WaitDelay"
+        }
+      ],
+      "removedNodes": []
+    },
+    "begin": {
+      "newNodes": [],
+      "removedNodes": []
+    },
+    "hero": {
+      "newNodes": [
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/BP_HeroCharacter.BP_HeroCharacter:EventGraph.K2Node_CallFunction_30",
+          "type": "Ability|GetAbilitySystemComponent"
+        },
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/BP_HeroCharacter.BP_HeroCharacter:EventGraph.K2Node_CallFunction_31",
+          "type": "GameplayTags|HasMatchingGameplayTag"
+        },
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/BP_HeroCharacter.BP_HeroCharacter:EventGraph.K2Node_IfThenElse_1",
+          "type": "Utilities|FlowControl|Branch"
+        },
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/BP_HeroCharacter.BP_HeroCharacter:EventGraph.K2Node_CallFunction_32",
+          "type": "Ability|GameplayEffect|RemoveLooseGameplayTags"
+        },
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/BP_HeroCharacter.BP_HeroCharacter:EventGraph.K2Node_CallFunction_33",
+          "type": "GameplayTags|MakeLiteralGameplayTagContainer"
+        }
+      ],
+      "removedNodes": []
+    },
+    "launcher": {
+      "newNodes": [
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/AirCombo/GA_Launcher.GA_Launcher:EventGraph.K2Node_MacroInstance_5",
+          "type": "Utilities|IsValid"
+        },
+        {
+          "id": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/AirCombo/GA_Launcher.GA_Launcher:EventGraph.K2Node_MacroInstance_6",
+          "type": "Utilities|IsValid"
+        }
+      ],
+      "removedNodes": []
+    }
+  },
+  "validation": {
+    "compile": [
+      "GA_AirAttack",
+      "GA_Launcher",
+      "BP_HeroCharacter"
+    ],
+    "pieAssertions": 10,
+    "passed": 10,
+    "gitDiffCheck": true,
+    "scope": "single player air ability with real GAS input; launcher trace and visual alignment not newly measured"
+  }
+}

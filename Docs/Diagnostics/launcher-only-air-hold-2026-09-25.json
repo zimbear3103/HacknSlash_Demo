@@ -1,0 +1,86 @@
+{
+  "date": "2026-09-25",
+  "project": "F:\\HacknSlash_Demo",
+  "map": "/Game/GASDocumentation/Maps/Map_Startup",
+  "fixture": "/Game/Tests/Combat/BP_LauncherOnlyAirHoldRegression",
+  "production_asset": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/AirCombo/GA_AirAttack",
+  "change": "BeginAirHold: validate launcher target before holding Hero and target; three execution connections rerouted; data pins preserved.",
+  "guard": "Target valid, alive, falling and distance <= 300 cm.",
+  "compile": {
+    "warnings_as_errors": true,
+    "blueprints": [
+      "GA_AirAttack",
+      "BP_LauncherOnlyAirHoldRegression"
+    ],
+    "result": "success"
+  },
+  "before": {
+    "log": "Saved/AirLauncherHoldFix/20260925/red-log.txt",
+    "failures": [
+      "normal jump attack preserves velocity",
+      "normal jump attack keeps gravity"
+    ],
+    "note": "Old implementation stops Hero movement and sets gravity to 0 without launcher target. Baseline ballistic assertion was later refined; its old PASS is not evidence."
+  },
+  "after": {
+    "first_assertion_utc": "2026-09-25T15:52:55.501Z",
+    "done_utc": "2026-09-25T15:53:16.812Z",
+    "pass": 18,
+    "fail": 0,
+    "done": true,
+    "assertion_log": [
+      "[2026.09.25-15.52.55:501][ 16]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS holds both",
+      "[2026.09.25-15.52.55:501][ 16]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS marks used",
+      "[2026.09.25-15.52.56:811][118]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS early input ignored and both gravity restored",
+      "[2026.09.25-15.52.56:923][127]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS reactivation blocked before landing",
+      "[2026.09.25-15.52.59:934][365]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS landing resets used tag",
+      "[2026.09.25-15.53.01:400][480]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS window input reaches Air_02",
+      "[2026.09.25-15.53.02:400][557]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS full combo restores both",
+      "[2026.09.25-15.53.05:614][811]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS normal jump attack preserves velocity",
+      "[2026.09.25-15.53.05:717][819]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS normal jump attack keeps gravity",
+      "[2026.09.25-15.53.05:923][835]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS normal jump continues ballistic arc",
+      "[2026.09.25-15.53.05:923][835]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS normal jump executed air ability",
+      "[2026.09.25-15.53.06:130][851]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS normal jump interruption keeps gravity",
+      "[2026.09.25-15.53.09:454][109]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS timeout test holds launcher pair",
+      "[2026.09.25-15.53.12:558][360]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS timeout restores gravity",
+      "[2026.09.25-15.53.15:781][611]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS landing cleared launcher target",
+      "[2026.09.25-15.53.16:495][664]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS real launcher selects target",
+      "[2026.09.25-15.53.16:602][672]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS real launcher into air attack holds both",
+      "[2026.09.25-15.53.16:812][688]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] PASS launcher interruption restores both",
+      "[2026.09.25-15.53.16:812][688]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] DONE"
+    ],
+    "integration_log": [
+      "[2026.09.25-15.53.15:956][624]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] launcher hero forward=X=1.000 Y=0.000 Z=0.000",
+      "[2026.09.25-15.53.15:956][624]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] launcher base=X=13.839 Y=55.124 Z=3146.799",
+      "[2026.09.25-15.53.15:956][624]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] launcher tip=X=-74.028 Y=148.896 Z=3135.014",
+      "[2026.09.25-15.53.15:956][624]LogBlueprintUserMessages: [BP_LauncherOnlyAirHoldRegression_C_0] [AIR ORIGIN TEST] launcher target=X=100.000 Y=0.000 Z=3126.950",
+      "[2026.09.25-15.53.15:996][627]LogBlueprintUserMessages: [GA_Launcher_C_0] Apply Damage",
+      "[2026.09.25-15.53.15:997][627]LogBlueprintUserMessages: [GA_Launcher_C_0] add Hit"
+    ],
+    "accessed_none_count": 0
+  },
+  "methodology": [
+    "Initial hold/combo/timeout cases inject m_airComboTarget and launch both actors to isolate hold logic.",
+    "Normal jump uses LaunchCharacter Z=420, no target; real ASC InputID3 activates air ability. This does not exercise physical Space mapping.",
+    "Integration spawns fresh target 100 cm along actual Hero forward vector; no target injection; real ASC InputID6 activates launcher and sword trace, then InputID3 starts air attack.",
+    "Normal-jump velocity is unchanged within +/-1 cm/s immediately on attack. A later sample decreases by >100 cm/s over 0.2 seconds with gravity 1.",
+    "Launcher interruption verifies both gravity values go from 0 to 1."
+  ],
+  "observed_limitations": [
+    "Launcher trace missed at 140 cm in this controlled setup; 100 cm passes.",
+    "JumpToSectionName Launcher failed for AM_Kwang_Launcher. Montage still plays and hits at 100 cm. No launcher montage/section modification in this patch.",
+    "Existing UIFloatingStatusBarClass load errors occur in project logs; no globally clean log claim.",
+    "No visual polish, multiplayer, death-during-hold or damage-per-hit proof."
+  ],
+  "finalization": {
+    "saved_assets": [
+      "GA_AirAttack",
+      "BP_LauncherOnlyAirHoldRegression"
+    ],
+    "save_all": false,
+    "map_saved": false,
+    "fixture_actor_removed": true,
+    "pie_stopped": true
+  },
+  "source_log": "Saved/Logs/HacknSlash_Demo-backup-2026.09.25-16.02.09.log"
+}

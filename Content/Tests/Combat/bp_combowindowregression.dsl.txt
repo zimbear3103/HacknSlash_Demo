@@ -1,0 +1,100 @@
+; Regression fixture: drives real GAS input and records actual montage sections.
+(event EventBeginPlay
+ (Utilities|FlowControl|Delay 0.5)
+ (Ability|Async|WaitGameplayEventtoActor :TargetActor (Game|GetPlayerCharacter 0) :EventTag "(TagName=\"Event.Combat.CombatWindow.Open\")" :OnlyTriggerOnce false :OnlyMatchExact true
+  (:then
+   (Ability|Async|WaitGameplayEventtoActor :TargetActor (Game|GetPlayerCharacter 0) :EventTag "(TagName=\"Event.Combat.CombatWindow.Close\")" :OnlyTriggerOnce false :OnlyMatchExact true
+    (:then (CallFunction|RunCases))
+    (:EventReceived (Variables|Default|SetMWindow false))))
+  (:EventReceived (Variables|Default|SetMWindow true))))
+(event Custom|RunCases
+ (Utilities|FlowControl|Sequence
+  (:then_0
+   (switch int (Variables|Default|GetMCaseIndex)
+    (:0 (Variables|Default|SetMExpected "Attack_01"))
+(:1 (Variables|Default|SetMExpected "Attack_01>Attack_02"))
+(:2 (Variables|Default|SetMExpected "Attack_01>Attack_02>Attack_03"))
+(:3 (Variables|Default|SetMExpected "Attack_01>Attack_02>HeavyAttack"))
+(:4 (Variables|Default|SetMExpected "Attack_01"))
+(:5 (Variables|Default|SetMExpected "Attack_01>Attack_02"))
+(:6 (Variables|Default|SetMExpected "Attack_01>Attack_02>HeavyAttack"))
+(:7 (Variables|Default|SetMExpected "Attack_01>Attack_02>Attack_03"))
+   ))
+  (:then_1
+   (Variables|Default|SetMRunning true)
+   (Variables|Default|SetMSection "None")
+   (Variables|Default|SetMObserved "")
+   (Variables|Default|SetMWindow false)
+   (Variables|Default|SetMWindowUsed false)
+   (Variables|Default|SetMEarlySent false)
+   (Variables|Default|SetMTailSent false)
+   (Development|PrintString :InString (Utilities|String|Append "[COMBO TEST] START case=" (Utilities|String|ToString(Integer) (Variables|Default|GetMCaseIndex))) :bPrintToScreen false :bPrintToLog true)
+   (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+   (Utilities|FlowControl|Delay 5.5)
+   (Variables|Default|SetMRunning false)
+   (Utilities|FlowControl|Sequence
+    (:then_0
+     (if (Utilities|String|EqualExactly(String) (Variables|Default|GetMObserved) (Variables|Default|GetMExpected))
+      (Development|PrintString :InString (Utilities|String|Append "[COMBO TEST] PASS " (Variables|Default|GetMObserved)) :bPrintToScreen false :bPrintToLog true)
+      (else (Development|PrintString :InString (Utilities|String|Append (Utilities|String|Append "[COMBO TEST] FAIL expected=" (Variables|Default|GetMExpected)) (Utilities|String|Append " actual=" (Variables|Default|GetMObserved))) :bPrintToScreen false :bPrintToLog true))))
+    (:then_1
+     (Variables|Default|SetMCaseIndex (+ (Variables|Default|GetMCaseIndex) 1))
+     (if (< (Variables|Default|GetMCaseIndex) 8)
+      (CallFunction|RunCases)
+      (else (Development|PrintString :InString "[COMBO TEST] DONE" :bPrintToScreen false :bPrintToLog true))))))))
+(event EventTick (DeltaSeconds)
+ (if (Variables|Default|GetMRunning)
+  (bind section (Animation|Montage|MontageGetCurrentSection :self (Components|SkeletalMesh|GetAnimInstance :self (Class|Character|GetMesh :self (Game|GetPlayerCharacter 0)))))
+  (Utilities|FlowControl|Sequence
+   (:then_0
+    (if (and (Utilities|String|NotEqualExactly(String) (Utilities|String|ToString(Name) section) "None") (Utilities|String|NotEqualExactly(String) (Utilities|String|ToString(Name) section) (Utilities|String|ToString(Name) (Variables|Default|GetMSection))))
+     (Variables|Default|SetMSection section)
+     (Variables|Default|SetMWindow false)
+     (Variables|Default|SetMWindowUsed false)
+     (Variables|Default|SetMEarlySent false)
+     (Variables|Default|SetMTailSent false)
+     (Variables|Default|SetMObserved (Utilities|String|Append (Utilities|String|Append (Variables|Default|GetMObserved) (Utilities|String|SelectString :A "" :B ">" :bPickA (Utilities|String|EqualExactly(String) (Variables|Default|GetMObserved) ""))) (Utilities|String|ToString(Name) section)))
+     (Development|PrintString :InString (Utilities|String|Append "[COMBO TEST] SECTION " (Utilities|String|ToString(Name) section)) :bPrintToScreen false :bPrintToLog true)))
+   (:then_1
+    (Utilities|FlowControl|Sequence
+     (:then_0
+      (if (and (not (Variables|Default|GetMWindow)) (not (Variables|Default|GetMEarlySent)))
+       (if (and (== (Variables|Default|GetMCaseIndex) 0) (Utilities|String|EqualExactly(String) (Utilities|String|ToString(Name) section) "Attack_01"))
+        (Variables|Default|SetMEarlySent true)
+        (Development|PrintString :InString "[COMBO TEST] EARLY LMB x8" :bPrintToScreen false :bPrintToLog true)
+        (for i (range 8) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3))
+        (elif (and (== (Variables|Default|GetMCaseIndex) 1) (Utilities|String|EqualExactly(String) (Utilities|String|ToString(Name) section) "Attack_02"))
+         (Variables|Default|SetMEarlySent true)
+         (Development|PrintString :InString "[COMBO TEST] EARLY RMB x8" :bPrintToScreen false :bPrintToLog true)
+         (for i (range 8) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4))))))
+     (:then_1
+      (Utilities|FlowControl|Sequence
+       (:then_0
+        (if (and (Variables|Default|GetMWindow) (not (Variables|Default|GetMWindowUsed)))
+         (Variables|Default|SetMWindowUsed true)
+         (if (and (Utilities|String|EqualExactly(String) (Utilities|String|ToString(Name) section) "Attack_01") (and (!= (Variables|Default|GetMCaseIndex) 0) (!= (Variables|Default|GetMCaseIndex) 4)))
+          (Development|PrintString :InString "[COMBO TEST] WINDOW LMB 01" :bPrintToScreen false :bPrintToLog true)
+          (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+          (elif (Utilities|String|EqualExactly(String) (Utilities|String|ToString(Name) section) "Attack_02")
+           (switch int (Variables|Default|GetMCaseIndex)
+            (:0) (:1) (:4) (:5)
+            (:2 (Development|PrintString :InString "[COMBO TEST] WINDOW LMB 02" :bPrintToScreen false :bPrintToLog true) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3))
+            (:3 (Development|PrintString :InString "[COMBO TEST] WINDOW RMB 02" :bPrintToScreen false :bPrintToLog true) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4))
+            (:6 (Development|PrintString :InString "[COMBO TEST] WINDOW RMB then LMB x8" :bPrintToScreen false :bPrintToLog true) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4) (for i (range 8) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)))
+            (:7 (Development|PrintString :InString "[COMBO TEST] WINDOW LMB then RMB x8" :bPrintToScreen false :bPrintToLog true) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3) (for i (range 8) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 4))))))))
+       (:then_1
+        (if (and (== (Variables|Default|GetMCaseIndex) 5) (and (Utilities|String|EqualExactly(String) (Utilities|String|ToString(Name) section) "Attack_01") (and (Variables|Default|GetMWindowUsed) (not (Variables|Default|GetMTailSent)))))
+         (Variables|Default|SetMTailSent true)
+         (Development|PrintString :InString "[COMBO TEST] EXTRA LMB x8 after choosing Attack_02" :bPrintToScreen false :bPrintToLog true)
+         (for i (range 8) (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)
+(GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Game|GetPlayerCharacter 0)) :InputID 3)))))))))))

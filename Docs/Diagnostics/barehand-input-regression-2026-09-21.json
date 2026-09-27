@@ -1,0 +1,370 @@
+{
+  "date": "2026-09-21",
+  "scope": "Bare-hand RMB event forwarding checkpoint; Charged Attack excluded",
+  "assetsChanged": [
+    "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandHeavyAttack",
+    "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack"
+  ],
+  "fixture": "/Game/Tests/Combat/BP_BareHandInputRegression",
+  "before": {
+    "AbilityInputID": "Ability2",
+    "AbilityTags": {
+      "gameplayTags": [
+        {
+          "tagName": "Ability.Attack.BareHand"
+        }
+      ]
+    },
+    "ActivationRequiredTags": {
+      "gameplayTags": [
+        {
+          "tagName": "State.CombatMode.BareHand"
+        }
+      ]
+    },
+    "ActivationBlockedTags": {
+      "gameplayTags": [
+        {
+          "tagName": "State.Dead"
+        },
+        {
+          "tagName": "State.Debuff.Stun"
+        },
+        {
+          "tagName": "State.Airborne"
+        },
+        {
+          "tagName": "State.Attacking"
+        }
+      ]
+    },
+    "ActivationOwnedTags": {
+      "gameplayTags": [
+        {
+          "tagName": "State.Attacking"
+        }
+      ]
+    },
+    "BlockAbilitiesWithTag": {
+      "gameplayTags": [
+        {
+          "tagName": "Ability.Attack"
+        }
+      ]
+    },
+    "CancelAbilitiesWithTag": {
+      "gameplayTags": []
+    },
+    "CostGameplayEffectClass": {
+      "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/GroundCombo/GE_MeleeStaminaCost.GE_MeleeStaminaCost_C"
+    },
+    "CooldownGameplayEffectClass": "None",
+    "ActivateAbilityOnGranted": false,
+    "InstancingPolicy": "InstancedPerActor",
+    "NetExecutionPolicy": "LocalPredicted"
+  },
+  "after": {
+    "AbilityInputID": "Ability2",
+    "AbilityTags": {
+      "gameplayTags": []
+    },
+    "ActivationRequiredTags": {
+      "gameplayTags": [
+        {
+          "tagName": "State.CombatMode.BareHand"
+        },
+        {
+          "tagName": "State.Attacking"
+        }
+      ]
+    },
+    "ActivationBlockedTags": {
+      "gameplayTags": [
+        {
+          "tagName": "State.Dead"
+        },
+        {
+          "tagName": "State.Debuff.Stun"
+        },
+        {
+          "tagName": "State.Airborne"
+        }
+      ]
+    },
+    "ActivationOwnedTags": {
+      "gameplayTags": []
+    },
+    "BlockAbilitiesWithTag": {
+      "gameplayTags": []
+    },
+    "CostGameplayEffectClass": "None",
+    "NetExecutionPolicy": "LocalPredicted"
+  },
+  "graphChanges": [
+    {
+      "node": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_LatentAbilityCall_0",
+      "dir": "input_pins",
+      "pin": "EventTags",
+      "before": {
+        "value": "(GameplayTags=((TagName=\"Event.Combat.MeleeHit\"),(TagName=\"Event.Combat.CombatWindow.Open\"),(TagName=\"Event.Combat.CombatWindow.Close\")))",
+        "connected_pins": [],
+        "pin_id": {
+          "direction": "EGPD_Input",
+          "index_id": 3,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_LatentAbilityCall_0"
+          }
+        },
+        "type_id": "Gameplay Tag Container Structure",
+        "name": "EventTags"
+      },
+      "after": {
+        "value": "(GameplayTags=((TagName=\"Event.Combat.MeleeHit\"),(TagName=\"Event.Combat.CombatWindow.Open\"),(TagName=\"Event.Combat.CombatWindow.Close\"),(TagName=\"Event.Combat.HeavyInput\")))",
+        "connected_pins": [],
+        "pin_id": {
+          "direction": "EGPD_Input",
+          "index_id": 3,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_LatentAbilityCall_0"
+          }
+        },
+        "type_id": "Gameplay Tag Container Structure",
+        "name": "EventTags"
+      }
+    },
+    {
+      "node": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_IfThenElse_11",
+      "dir": "output_pins",
+      "pin": "then",
+      "before": {
+        "value": "",
+        "connected_pins": [
+          {
+            "direction": "EGPD_Input",
+            "index_id": 0,
+            "node": {
+              "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17"
+            }
+          }
+        ],
+        "pin_id": {
+          "direction": "EGPD_Output",
+          "index_id": 0,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_IfThenElse_11"
+          }
+        },
+        "type_id": "Exec",
+        "name": "then"
+      },
+      "after": {
+        "value": "",
+        "connected_pins": [
+          {
+            "direction": "EGPD_Input",
+            "index_id": 0,
+            "node": {
+              "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_VariableSet_4"
+            }
+          }
+        ],
+        "pin_id": {
+          "direction": "EGPD_Output",
+          "index_id": 0,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_IfThenElse_11"
+          }
+        },
+        "type_id": "Exec",
+        "name": "then"
+      }
+    },
+    {
+      "node": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17",
+      "dir": "input_pins",
+      "pin": "execute",
+      "before": {
+        "value": "",
+        "connected_pins": [
+          {
+            "direction": "EGPD_Output",
+            "index_id": 0,
+            "node": {
+              "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_IfThenElse_11"
+            }
+          }
+        ],
+        "pin_id": {
+          "direction": "EGPD_Input",
+          "index_id": 0,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17"
+          }
+        },
+        "type_id": "Exec",
+        "name": "execute"
+      },
+      "after": {
+        "value": "",
+        "connected_pins": [
+          {
+            "direction": "EGPD_Output",
+            "index_id": 0,
+            "node": {
+              "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_VariableSet_4"
+            }
+          }
+        ],
+        "pin_id": {
+          "direction": "EGPD_Input",
+          "index_id": 0,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17"
+          }
+        },
+        "type_id": "Exec",
+        "name": "execute"
+      }
+    },
+    {
+      "node": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17",
+      "dir": "input_pins",
+      "pin": "InString",
+      "before": {
+        "value": "RMBAttack",
+        "connected_pins": [],
+        "pin_id": {
+          "direction": "EGPD_Input",
+          "index_id": 1,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17"
+          }
+        },
+        "type_id": "String",
+        "name": "InString"
+      },
+      "after": {
+        "value": "BARE HEAVY ACCEPTED",
+        "connected_pins": [],
+        "pin_id": {
+          "direction": "EGPD_Input",
+          "index_id": 1,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17"
+          }
+        },
+        "type_id": "String",
+        "name": "InString"
+      }
+    },
+    {
+      "node": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17",
+      "dir": "output_pins",
+      "pin": "then",
+      "before": {
+        "value": "",
+        "connected_pins": [
+          {
+            "direction": "EGPD_Input",
+            "index_id": 0,
+            "node": {
+              "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_8"
+            }
+          }
+        ],
+        "pin_id": {
+          "direction": "EGPD_Output",
+          "index_id": 0,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17"
+          }
+        },
+        "type_id": "Exec",
+        "name": "then"
+      },
+      "after": {
+        "value": "",
+        "connected_pins": [],
+        "pin_id": {
+          "direction": "EGPD_Output",
+          "index_id": 0,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17"
+          }
+        },
+        "type_id": "Exec",
+        "name": "then"
+      }
+    },
+    {
+      "node": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_8",
+      "dir": "input_pins",
+      "pin": "execute",
+      "before": {
+        "value": "",
+        "connected_pins": [
+          {
+            "direction": "EGPD_Output",
+            "index_id": 0,
+            "node": {
+              "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_17"
+            }
+          }
+        ],
+        "pin_id": {
+          "direction": "EGPD_Input",
+          "index_id": 0,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_8"
+          }
+        },
+        "type_id": "Exec",
+        "name": "execute"
+      },
+      "after": {
+        "value": "",
+        "connected_pins": [],
+        "pin_id": {
+          "direction": "EGPD_Input",
+          "index_id": 0,
+          "node": {
+            "refPath": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_CallFunction_8"
+          }
+        },
+        "type_id": "Exec",
+        "name": "execute"
+      }
+    },
+    {
+      "node": "/Game/GASDocumentation/Characters/Hero/Abilities/Attack/BareHand/GA_BareHandAttack.GA_BareHandAttack:EventGraph.K2Node_VariableSet_4",
+      "change": "added close-window setter"
+    }
+  ],
+  "verification": {
+    "map": "Map_Startup",
+    "redRunUTC": "2026-09-21 09:15:51 - 09:15:59",
+    "redResult": "3 failures; light three-hit control passed",
+    "discardedRunUTC": "2026-09-21 09:18:22 - 09:18:31",
+    "discardedReason": "Editor background throttle reduced tick rate to 3 FPS; control test failed",
+    "greenRunUTC": "2026-09-21 09:19:43 - 09:19:51",
+    "greenResult": "4 PASS, 0 FAIL; exactly one BARE HEAVY ACCEPTED",
+    "checks": [
+      "idle RMB ignored",
+      "RMB forwarded during active bare-hand attack",
+      "index 1 RMB rejected; index 2 window consumed before following LMB",
+      "light three-hit chain remains Attack_01>Attack_02>Attack_03"
+    ],
+    "limits": [
+      "Tests inject ASC input IDs, not physical mouse/F input",
+      "No stamina delta measurement; cost removed and no CommitAbility in forwarder",
+      "No visual polish, multiplayer, new damage, or Charged Attack validation",
+      "Short windows are unreliable at 3 FPS; background throttle restored to true"
+    ]
+  },
+  "cleanup": {
+    "PIEStopped": true,
+    "fixtureActorRemovedFromMap": true,
+    "backgroundThrottleRestored": true,
+    "mapNotSaved": true
+  }
+}

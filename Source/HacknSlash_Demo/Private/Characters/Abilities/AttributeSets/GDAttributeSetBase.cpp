@@ -42,7 +42,7 @@ void UGDAttributeSetBase::PreAttributeChange(const FGameplayAttribute& Attribute
 	}
 }
 
-void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallbackData & Data)
+void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
 
@@ -108,8 +108,8 @@ void UGDAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
 		// Store a local copy of the amount of damage done and clear the damage attribute
 		const float LocalDamageDone = GetDamage();
 		SetDamage(0.f);
-	
-		if (LocalDamageDone > 0.0f)
+
+		if (LocalDamageDone > 0.0f && IsValid(TargetCharacter) && TargetCharacter->IsAlive())
 		{
 			// If character was alive before damage is added, handle damage
 			// This prevents damage being added to dead things and replaying death animations
@@ -241,7 +241,7 @@ void UGDAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME_CONDITION_NOTIFY(UGDAttributeSetBase, GoldBounty, COND_None, REPNOTIFY_Always);
 }
 
-void UGDAttributeSetBase::AdjustAttributeForMaxChange(FGameplayAttributeData & AffectedAttribute, const FGameplayAttributeData & MaxAttribute, float NewMaxValue, const FGameplayAttribute & AffectedAttributeProperty)
+void UGDAttributeSetBase::AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty)
 {
 	UAbilitySystemComponent* AbilityComp = GetOwningAbilitySystemComponent();
 	const float CurrentMaxValue = MaxAttribute.GetCurrentValue();
