@@ -73,3 +73,22 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Local AI assistant configuration and instructions
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.mcp.json
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+/.github/copilot-instructions.md
+/.github/instructions/
+/.github/prompts/
+/.vscode/mcp.json
+
+# Local AI conversation context and handoff documents
+/Docs/*_CONTEXT.md
+/Docs/*_HANDOFF.md
