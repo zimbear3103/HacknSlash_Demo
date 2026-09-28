@@ -1,0 +1,154 @@
+; Runs on the actual Map_Startup floor. Do not place a temporary platform.
+; Duplicate BP_LauncherOnlyAirHoldRegression and replace its complete EventGraph.
+; Reuse m_testHero (BP_HeroCharacter), m_testTarget (GDCharacterBase), m_probeVz (float).
+; Add floats m_savedHeroGravity and m_savedTargetGravity.
+; Add booleans m_window, m_windowUsed, m_running, m_air02Seen; all default false.
+; Confirm that the DSL equality operator resolves UObject equality for the launcher identity assertion.
+; Run before adding the eight demonstration minions. Do not provide player input during the run.
+; Ground center Z=222 assumes the observed floor Z=130.3 and the character capsule height.
+; Remove the fixture actor after stopping PIE. No ability or gameplay asset is modified.
+
+(event EventBeginPlay
+ (Variables|Default|SetMRunning false)
+ (Variables|Default|SetMWindow false)
+ (Variables|Default|SetMWindowUsed false)
+ (Variables|Default|SetMAir02Seen false)
+ (Utilities|FlowControl|Delay 0.5)
+ (bind h (Utilities|Casting|CastToBP_HeroCharacter (Game|GetPlayerCharacter 0))
+  (:then
+   (Variables|Default|SetMTestHero h)
+   (Ability|Async|WaitGameplayEventtoActor :TargetActor h :EventTag "(TagName=\"Event.Combat.CombatWindow.Open\")" :OnlyTriggerOnce false :OnlyMatchExact true
+    (:then
+     (Ability|Async|WaitGameplayEventtoActor :TargetActor (Variables|Default|GetMTestHero) :EventTag "(TagName=\"Event.Combat.CombatWindow.Close\")" :OnlyTriggerOnce false :OnlyMatchExact true
+      (:then (CallFunction|RunCases))
+      (:EventReceived (Variables|Default|SetMWindow false))))
+    (:EventReceived (Variables|Default|SetMWindow true))))
+  (:CastFailed
+   (Development|PrintString :InString "[AI MINION TEST] FAIL missing Hero" :bPrintToScreen false)
+   (Development|PrintString :InString "[AI MINION TEST] DONE" :bPrintToScreen false))))
+
+(event Custom|RunCases
+ (Development|PrintString :InString "[AI MINION TEST] START real floor and active AI controller" :bPrintToScreen false)
+ (Transformation|SetActorLocation :self (Variables|Default|GetMTestHero) :NewLocation (Math|Vector|MakeVector -2400 -1200 222) :bTeleport true)
+ (Utilities|FlowControl|Delay 0.3)
+ (if (not (AI|Components|NavMovement|IsFalling (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestHero))))
+  (Development|PrintString :InString "[AI MINION TEST] PASS Hero grounded on map floor" :bPrintToScreen false)
+  (else (Development|PrintString :InString "[AI MINION TEST] FAIL Hero not grounded on map floor" :bPrintToScreen false)))
+ (bind target (Game|SpawnActorfromClass :Class "/Game/GASDocumentation/Characters/Minions/MinionAI/BP_AIMinionRed.BP_AIMinionRed_C" :SpawnTransform (Math|Transform|MakeTransform :Location (Math|Vector|MakeVector -1800 -1200 222)) :CollisionHandlingOverride "AlwaysSpawn"))
+ (Variables|Default|SetMTestTarget target)
+ (Utilities|IsValid (Variables|Default|GetMTestTarget)
+  (:"Is Not Valid"
+   (Development|PrintString :InString "[AI MINION TEST] FAIL could not spawn AIMinion" :bPrintToScreen false)
+   (Development|PrintString :InString "[AI MINION TEST] DONE" :bPrintToScreen false))
+  (:"Is Valid"
+   (Pawn|SpawnDefaultController :self (Variables|Default|GetMTestTarget))
+   (Utilities|FlowControl|Delay 0.2)
+   (if (Utilities|IsValid (Pawn|GetController (Variables|Default|GetMTestTarget)))
+    (Development|PrintString :InString "[AI MINION TEST] PASS AIMinion has controller" :bPrintToScreen false)
+    (else (Development|PrintString :InString "[AI MINION TEST] FAIL AIMinion has no controller" :bPrintToScreen false)))
+   (if (and (GASDocumentation|GDCharacter|IsAlive (Variables|Default|GetMTestTarget)) (not (AI|Components|NavMovement|IsFalling (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestTarget)))))
+    (Development|PrintString :InString "[AI MINION TEST] PASS AIMinion alive and grounded" :bPrintToScreen false)
+    (else (Development|PrintString :InString "[AI MINION TEST] FAIL AIMinion not alive or not grounded" :bPrintToScreen false)))
+
+   ; A valid controller alone is insufficient: measure real movement toward the Hero.
+   (Variables|Default|SetMProbeVz (Transformation|GetDistanceTo :self (Variables|Default|GetMTestTarget) :OtherActor (Variables|Default|GetMTestHero)))
+   (Development|PrintString :InString (Utilities|String|Append "[AI MINION TEST] chase baseline=" (Utilities|String|ToString(Float) (Variables|Default|GetMProbeVz))) :bPrintToScreen false)
+   (Utilities|FlowControl|Delay 1.5)
+   (Development|PrintString :InString (Utilities|String|Append "[AI MINION TEST] chase result=" (Utilities|String|ToString(Float) (Transformation|GetDistanceTo :self (Variables|Default|GetMTestTarget) :OtherActor (Variables|Default|GetMTestHero)))) :bPrintToScreen false)
+   (if (< (Transformation|GetDistanceTo :self (Variables|Default|GetMTestTarget) :OtherActor (Variables|Default|GetMTestHero)) (- (Variables|Default|GetMProbeVz) 100.0))
+    (Development|PrintString :InString "[AI MINION TEST] PASS chase reduces distance by over 100cm" :bPrintToScreen false)
+    (else (Development|PrintString :InString "[AI MINION TEST] FAIL chase did not reduce distance by 100cm" :bPrintToScreen false)))
+
+   ; Change the destination on the same floor; the old chase destination is now insufficient.
+   (Transformation|SetActorLocation :self (Variables|Default|GetMTestHero) :NewLocation (Math|Vector|MakeVector -2400 -600 222) :bTeleport true)
+   (Utilities|FlowControl|Delay 0.1)
+   (Variables|Default|SetMProbeVz (Transformation|GetDistanceTo :self (Variables|Default|GetMTestTarget) :OtherActor (Variables|Default|GetMTestHero)))
+   (Development|PrintString :InString (Utilities|String|Append "[AI MINION TEST] retarget baseline=" (Utilities|String|ToString(Float) (Variables|Default|GetMProbeVz))) :bPrintToScreen false)
+   (Utilities|FlowControl|Delay 1.5)
+   (Development|PrintString :InString (Utilities|String|Append "[AI MINION TEST] retarget result=" (Utilities|String|ToString(Float) (Transformation|GetDistanceTo :self (Variables|Default|GetMTestTarget) :OtherActor (Variables|Default|GetMTestHero)))) :bPrintToScreen false)
+   (if (< (Transformation|GetDistanceTo :self (Variables|Default|GetMTestTarget) :OtherActor (Variables|Default|GetMTestHero)) (- (Variables|Default|GetMProbeVz) 100.0))
+    (Development|PrintString :InString "[AI MINION TEST] PASS chase updates after Hero relocation" :bPrintToScreen false)
+    (else (Development|PrintString :InString "[AI MINION TEST] FAIL chase did not follow relocated Hero" :bPrintToScreen false)))
+
+   ; Position the same active AI pawn within the established trace test distance.
+   ; This changes setup position only: no launcher target, gravity, tag, or launch velocity is injected.
+   (Transformation|SetActorLocation :self (Variables|Default|GetMTestTarget) :NewLocation (+ (Transformation|GetActorLocation :self (Variables|Default|GetMTestHero)) (* (Transformation|GetActorForwardVector :self (Variables|Default|GetMTestHero)) 100.0)) :bTeleport true)
+   (Utilities|FlowControl|Delay 0.2)
+   (Variables|Default|SetMSavedHeroGravity (Class|CharacterMovementComponent|GetGravityScale :self (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestHero))))
+   (Variables|Default|SetMSavedTargetGravity (Class|CharacterMovementComponent|GetGravityScale :self (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestTarget))))
+   (if (Utilities|IsValid (Class|BPHeroCharacter|GetMAirComboTarget :self (Variables|Default|GetMTestHero)))
+    (Development|PrintString :InString "[AI MINION TEST] FAIL launcher setup contains an existing air target" :bPrintToScreen false)
+    (else (Development|PrintString :InString "[AI MINION TEST] PASS launcher begins without injected air target" :bPrintToScreen false)))
+   (Development|PrintString :InString (Utilities|String|Append "[AI MINION TEST] pre-launch target HP=" (Utilities|String|ToString(Float) (GASDocumentation|GDCharacter|Attributes|GetHealth :self (Variables|Default|GetMTestTarget)))) :bPrintToScreen false)
+   (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Variables|Default|GetMTestHero)) :InputID 6)
+   (GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Variables|Default|GetMTestHero)) :InputID 6)
+   (Utilities|FlowControl|Delay 0.7)
+   (if (and (== (Class|BPHeroCharacter|GetMAirComboTarget :self (Variables|Default|GetMTestHero)) (Variables|Default|GetMTestTarget)) (and (AI|Components|NavMovement|IsFalling (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestTarget))) (AI|Components|NavMovement|IsFalling (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestHero)))))
+    (Development|PrintString :InString "[AI MINION TEST] PASS real launcher selects this AIMinion and launches both" :bPrintToScreen false)
+    (Variables|Default|SetMWindow false)
+    (Variables|Default|SetMWindowUsed false)
+    (Variables|Default|SetMAir02Seen false)
+    (Variables|Default|SetMRunning true)
+    (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Variables|Default|GetMTestHero)) :InputID 3)
+    (GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Variables|Default|GetMTestHero)) :InputID 3)
+    (Utilities|FlowControl|Delay 0.1)
+    (if (and (== (Class|CharacterMovementComponent|GetGravityScale :self (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestHero))) 0.0) (== (Class|CharacterMovementComponent|GetGravityScale :self (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestTarget))) 0.0))
+     (Development|PrintString :InString "[AI MINION TEST] PASS real air attack holds Hero and AIMinion" :bPrintToScreen false)
+     (else (Development|PrintString :InString "[AI MINION TEST] FAIL real air attack did not hold both" :bPrintToScreen false)))
+    (Utilities|FlowControl|Delay 2.5)
+    (Variables|Default|SetMRunning false)
+    (if (Variables|Default|GetMWindowUsed)
+     (Development|PrintString :InString "[AI MINION TEST] PASS second air input sent in open Air_01 window" :bPrintToScreen false)
+     (else (Development|PrintString :InString "[AI MINION TEST] FAIL no Air_01 combo window observed" :bPrintToScreen false)))
+    (if (Variables|Default|GetMAir02Seen)
+     (Development|PrintString :InString "[AI MINION TEST] PASS actual montage reached Air_02" :bPrintToScreen false)
+     (else (Development|PrintString :InString "[AI MINION TEST] FAIL actual montage did not reach Air_02" :bPrintToScreen false)))
+    (if (and (== (Class|CharacterMovementComponent|GetGravityScale :self (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestHero))) (Variables|Default|GetMSavedHeroGravity)) (== (Class|CharacterMovementComponent|GetGravityScale :self (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestTarget))) (Variables|Default|GetMSavedTargetGravity)))
+     (Development|PrintString :InString "[AI MINION TEST] PASS combo restores original gravity for both" :bPrintToScreen false)
+     (else (Development|PrintString :InString "[AI MINION TEST] FAIL combo did not restore both gravities" :bPrintToScreen false)))
+    (Utilities|FlowControl|Delay 2.5)
+    (if (and (not (AI|Components|NavMovement|IsFalling (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestHero)))) (not (AI|Components|NavMovement|IsFalling (Class|Character|GetCharacterMovement :self (Variables|Default|GetMTestTarget)))))
+     (Development|PrintString :InString "[AI MINION TEST] PASS Hero and AIMinion landed" :bPrintToScreen false)
+     (else (Development|PrintString :InString "[AI MINION TEST] FAIL Hero or AIMinion did not land" :bPrintToScreen false)))
+    (if (and (not (Utilities|IsValid (Class|BPHeroCharacter|GetMAirComboTarget :self (Variables|Default|GetMTestHero)))) (not (GameplayTags|HasMatchingGameplayTag :self (Ability|GetAbilitySystemComponent (Variables|Default|GetMTestHero)) :TagToCheck "(TagName=\"State.AirComboUsed\")")))
+     (Development|PrintString :InString "[AI MINION TEST] PASS landing clears air target and used tag" :bPrintToScreen false)
+     (else (Development|PrintString :InString "[AI MINION TEST] FAIL landing did not reset air target or used tag" :bPrintToScreen false)))
+    (Utilities|IsValid (Variables|Default|GetMTestTarget)
+     (:"Is Not Valid"
+      (Development|PrintString :InString "[AI MINION TEST] FAIL AIMinion destroyed before chase resume check" :bPrintToScreen false)
+      (Development|PrintString :InString "[AI MINION TEST] DONE" :bPrintToScreen false))
+     (:"Is Valid"
+      (if (GASDocumentation|GDCharacter|IsAlive (Variables|Default|GetMTestTarget))
+       (Development|PrintString :InString "[AI MINION TEST] PASS AIMinion survived launcher and air combo" :bPrintToScreen false)
+       (Transformation|SetActorLocation :self (Variables|Default|GetMTestHero) :NewLocation (Math|Vector|MakeVector -2400 -1200 222) :bTeleport true)
+       (Utilities|FlowControl|Delay 0.1)
+       (Variables|Default|SetMProbeVz (Transformation|GetDistanceTo :self (Variables|Default|GetMTestTarget) :OtherActor (Variables|Default|GetMTestHero)))
+       (Development|PrintString :InString (Utilities|String|Append "[AI MINION TEST] resume baseline=" (Utilities|String|ToString(Float) (Variables|Default|GetMProbeVz))) :bPrintToScreen false)
+       (Utilities|FlowControl|Delay 1.5)
+       (Development|PrintString :InString (Utilities|String|Append "[AI MINION TEST] resume result=" (Utilities|String|ToString(Float) (Transformation|GetDistanceTo :self (Variables|Default|GetMTestTarget) :OtherActor (Variables|Default|GetMTestHero)))) :bPrintToScreen false)
+       (if (and (> (Variables|Default|GetMProbeVz) 300.0) (< (Transformation|GetDistanceTo :self (Variables|Default|GetMTestTarget) :OtherActor (Variables|Default|GetMTestHero)) (- (Variables|Default|GetMProbeVz) 100.0)))
+        (Development|PrintString :InString "[AI MINION TEST] PASS surviving AIMinion resumes chase after landing" :bPrintToScreen false)
+        (else (Development|PrintString :InString "[AI MINION TEST] FAIL AIMinion did not resume chase or setup distance too small" :bPrintToScreen false)))
+       (Development|PrintString :InString "[AI MINION TEST] DONE" :bPrintToScreen false)
+       (else
+        (Development|PrintString :InString "[AI MINION TEST] FAIL AIMinion died before chase resume check" :bPrintToScreen false)
+        (Development|PrintString :InString "[AI MINION TEST] DONE" :bPrintToScreen false)))))
+    (else
+     (Development|PrintString :InString "[AI MINION TEST] FAIL real launcher did not select and launch this AIMinion" :bPrintToScreen false)
+     (Development|PrintString :InString "[AI MINION TEST] DONE" :bPrintToScreen false))))))
+
+; React on the next tick after the real window event, after the ability has consumed that event.
+; Observe Air_02 independently from sending the second input.
+(event EventTick (DeltaSeconds)
+ (if (Variables|Default|GetMRunning)
+  (bind section (Animation|Montage|MontageGetCurrentSection :self (Components|SkeletalMesh|GetAnimInstance :self (Class|Character|GetMesh :self (Variables|Default|GetMTestHero)))))
+  (Utilities|FlowControl|Sequence
+   (:then_0
+    (if (Utilities|String|EqualExactly(String) (Utilities|String|ToString(Name) section) "Air_02")
+     (Variables|Default|SetMAir02Seen true)))
+   (:then_1
+    (if (and (Variables|Default|GetMWindow) (and (not (Variables|Default|GetMWindowUsed)) (Utilities|String|EqualExactly(String) (Utilities|String|ToString(Name) section) "Air_01")))
+     (Variables|Default|SetMWindowUsed true)
+     (Development|PrintString :InString "[AI MINION TEST] WINDOW Air_01 LMB" :bPrintToScreen false)
+     (GameplayAbilities|PressInputID :self (Ability|GetAbilitySystemComponent (Variables|Default|GetMTestHero)) :InputID 3)
+     (GameplayAbilities|ReleaseInputID :self (Ability|GetAbilitySystemComponent (Variables|Default|GetMTestHero)) :InputID 3))))))

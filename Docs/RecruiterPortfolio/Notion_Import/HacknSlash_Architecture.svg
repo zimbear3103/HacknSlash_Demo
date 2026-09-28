@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="920" viewBox="0 0 1440 920" role="img" aria-labelledby="title desc">
+  <title id="title">Kiến trúc runtime của Hack &amp; Slash Demo</title>
+  <desc id="desc">Sơ đồ kiến trúc Unreal Engine 5.8 kết hợp C++ và Blueprint, mô tả input, ability GAS, event animation, gameplay effect, attribute replication, HUD và vòng đời respawn.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#121d31"/></linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102b4b"/><stop offset="1" stop-color="#12375a"/></linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2a1d50"/><stop offset="1" stop-color="#352568"/></linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#103b3b"/><stop offset="1" stop-color="#14534f"/></linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#49301a"/><stop offset="1" stop-color="#68401d"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#020617" flood-opacity=".32"/></filter>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#69b7ff"/></marker>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5eead4"/></marker>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#f6b866"/></marker>
+    <style>
+      text { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+      .title { fill:#f8fafc; font-size:30px; font-weight:700; letter-spacing:.2px; }
+      .subtitle { fill:#a9bad1; font-size:15px; }
+      .eyebrow { fill:#78c5ff; font-size:12px; font-weight:700; letter-spacing:1.5px; }
+      .cardtitle { fill:#f8fafc; font-size:18px; font-weight:700; }
+      .body { fill:#d2deed; font-size:14px; }
+      .small { fill:#a9bad1; font-size:12px; }
+      .tag { fill:#dcecff; font-size:11px; font-weight:700; letter-spacing:.8px; }
+      .section { fill:#c3d2e6; font-size:12px; font-weight:700; letter-spacing:1.4px; }
+      .card { stroke:#ffffff; stroke-opacity:.12; stroke-width:1; rx:17; filter:url(#shadow); }
+      .flow { fill:none; stroke:#69b7ff; stroke-width:2.5; marker-end:url(#arrowBlue); }
+      .feedback { fill:none; stroke:#5eead4; stroke-width:2.5; marker-end:url(#arrowTeal); }
+      .lifecycle { fill:none; stroke:#f6b866; stroke-width:2.3; marker-end:url(#arrowOrange); }
+    </style>
+  </defs>
+
+  <rect width="1440" height="920" rx="26" fill="url(#bg)"/>
+  <circle cx="1330" cy="45" r="210" fill="#2876bd" opacity=".07"/>
+  <circle cx="62" cy="880" r="230" fill="#3b82f6" opacity=".045"/>
+
+  <text x="48" y="52" class="eyebrow">KIẾN TRÚC DỰ ÁN</text>
+  <text x="48" y="91" class="title">Combat Runtime · Unreal Engine 5.8</text>
+  <text x="48" y="119" class="subtitle">C++ kết hợp Blueprint · Gameplay Ability System · Attribute replication và UI feedback</text>
+
+  <text x="48" y="163" class="section">1  INPUT, GAS OWNERSHIP &amp; KÍCH HOẠT ABILITY</text>
+
+  <rect x="40" y="184" width="300" height="150" class="card" fill="url(#blue)"/>
+  <text x="64" y="213" class="tag">NHÂN VẬT ĐIỀU KHIỂN</text>
+  <text x="64" y="246" class="cardtitle">Hero + PlayerController</text>
+  <text x="64" y="275" class="body">GDHeroCharacter</text>
+  <text x="64" y="298" class="small">Input binding · di chuyển · camera</text>
+  <text x="64" y="318" class="small">Possess khởi tạo ActorInfo cho GAS</text>
+
+  <rect x="390" y="184" width="300" height="150" class="card" fill="url(#blue)"/>
+  <text x="414" y="213" class="tag">GAS &amp; ATTRIBUTE ĐƯỢC REPLICATE</text>
+  <text x="414" y="246" class="cardtitle">GDPlayerState</text>
+  <text x="414" y="275" class="body">AbilitySystemComponent</text>
+  <text x="414" y="298" class="small">AttributeSet · Mixed replication mode</text>
+  <text x="414" y="318" class="small">Health · Mana · Stamina · gameplay tags</text>
+
+  <rect x="740" y="184" width="300" height="150" class="card" fill="url(#violet)"/>
+  <text x="764" y="213" class="tag">LOGIC COMBAT</text>
+  <text x="764" y="246" class="cardtitle">Gameplay Abilities</text>
+  <text x="764" y="275" class="body">C++ base + Blueprint assets</text>
+  <text x="764" y="298" class="small">Melee · air/launcher · bare-hand</text>
+  <text x="764" y="318" class="small">Input ID và gameplay event</text>
+
+  <rect x="1090" y="184" width="310" height="150" class="card" fill="url(#violet)"/>
+  <text x="1114" y="213" class="tag">ĐỒNG BỘ ANIMATION</text>
+  <text x="1114" y="246" class="cardtitle">Montages + AnimNotifies</text>
+  <text x="1114" y="275" class="body">C++ AbilityTask theo dõi montage/event</text>
+  <text x="1114" y="298" class="small">Combo window · hit trace · gameplay cue</text>
+  <text x="1114" y="318" class="small">Animation đồng bộ hit timing và feedback</text>
+
+  <path d="M340 258 H382" class="flow"/>
+  <path d="M690 258 H732" class="flow"/>
+  <path d="M1040 258 H1082" class="flow"/>
+
+  <text x="48" y="386" class="section">2  XỬ LÝ HIT &amp; FEEDBACK COMBAT</text>
+
+  <rect x="40" y="410" width="300" height="150" class="card" fill="url(#violet)"/>
+  <text x="64" y="439" class="tag">EVENT TỪ ANIMATION</text>
+  <text x="64" y="472" class="cardtitle">Hit window / trace</text>
+  <text x="64" y="501" class="body">Notify hoặc gameplay event</text>
+  <text x="64" y="524" class="small">Mở hit window đúng thời điểm của đòn</text>
+  <text x="64" y="544" class="small">Đồng bộ combo và sword trail</text>
+
+  <rect x="390" y="410" width="300" height="150" class="card" fill="url(#orange)"/>
+  <text x="414" y="439" class="tag">PIPELINE HIỆU ỨNG</text>
+  <text x="414" y="472" class="cardtitle">GameplayEffect</text>
+  <text x="414" y="501" class="body">Damage Execution Calculation</text>
+  <text x="414" y="524" class="small">Damage · stamina cost · buff</text>
+  <text x="414" y="544" class="small">Mang theo effect context và hit data</text>
+
+  <rect x="740" y="410" width="300" height="150" class="card" fill="url(#teal)"/>
+  <text x="764" y="439" class="tag">TRẠNG THÁI ATTRIBUTE</text>
+  <text x="764" y="472" class="cardtitle">GDAttributeSetBase</text>
+  <text x="764" y="501" class="body">Cập nhật và clamp giá trị attribute</text>
+  <text x="764" y="524" class="small">Replicate qua ASC trên PlayerState</text>
+  <text x="764" y="544" class="small">Damage có thể gây hit reaction hoặc death</text>
+
+  <rect x="1090" y="410" width="310" height="150" class="card" fill="url(#teal)"/>
+  <text x="1114" y="439" class="tag">TRÌNH BÀY / FEEDBACK</text>
+  <text x="1114" y="472" class="cardtitle">HUD + phản hồi combat</text>
+  <text x="1114" y="501" class="body">Health · Stamina · Mana · damage text</text>
+  <text x="1114" y="524" class="small">Attribute delegate từ PlayerState → UMG</text>
+  <text x="1114" y="544" class="small">Hit reaction của nhân vật và GameplayCue</text>
+
+  <path d="M340 485 H382" class="flow"/>
+  <path d="M690 485 H732" class="flow"/>
+  <path d="M1040 485 H1082" class="feedback"/>
+  <path d="M1245 334 V370 H190 V402" class="flow"/>
+  <rect x="526" y="352" width="338" height="28" rx="14" fill="#16243a" stroke="#30445e"/>
+  <text x="695" y="371" text-anchor="middle" class="small">Montage notify / gameplay event mở hit window</text>
+
+  <rect x="40" y="611" width="1360" height="248" rx="20" fill="#101b2d" stroke="#ffffff" stroke-opacity=".1"/>
+  <text x="68" y="648" class="section">3  VÒNG ĐỜI NHÂN VẬT · GAME MODE</text>
+  <text x="68" y="681" class="small">GameMode đổi possession và quản lý timer respawn khi hero chết.</text>
+
+  <rect x="72" y="714" width="265" height="94" rx="15" fill="#222d40" stroke="#f6b866" stroke-opacity=".42"/>
+  <text x="94" y="748" class="tag" fill="#ffd99e">ĐIỀU KIỆN</text>
+  <text x="94" y="779" class="cardtitle">Health bằng 0</text>
+
+  <rect x="406" y="714" width="265" height="94" rx="15" fill="#222d40" stroke="#f6b866" stroke-opacity=".42"/>
+  <text x="428" y="748" class="tag" fill="#ffd99e">GAMEMODE</text>
+  <text x="428" y="779" class="cardtitle">HeroDied()</text>
+
+  <rect x="740" y="714" width="265" height="94" rx="15" fill="#222d40" stroke="#f6b866" stroke-opacity=".42"/>
+  <text x="762" y="748" class="tag" fill="#ffd99e">TRẠNG THÁI TẠM</text>
+  <text x="762" y="779" class="cardtitle">Spectator · chờ 5 giây</text>
+
+  <rect x="1074" y="714" width="265" height="94" rx="15" fill="#222d40" stroke="#f6b866" stroke-opacity=".42"/>
+  <text x="1096" y="748" class="tag" fill="#ffd99e">HỒI SINH</text>
+  <text x="1096" y="779" class="cardtitle">RespawnHero()</text>
+
+  <path d="M337 761 H398" class="lifecycle"/>
+  <path d="M671 761 H732" class="lifecycle"/>
+  <path d="M1005 761 H1066" class="lifecycle"/>
+
+  <text x="1370" y="891" text-anchor="end" class="small">Runtime C++ + combat content được cấu hình bằng Blueprint</text>
+</svg>
